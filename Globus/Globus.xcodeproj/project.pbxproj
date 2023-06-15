@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D22CF552A3B6F26001EE215 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D22CF542A3B6F26001EE215 /* Sphere.swift */; };
 		9DBEE69D2A3607B900C2567D /* GlobusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEE69C2A3607B900C2567D /* GlobusApp.swift */; };
 		9DBEE69F2A3607B900C2567D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEE69E2A3607B900C2567D /* ContentView.swift */; };
 		9DBEE6A12A3607BA00C2567D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DBEE6A02A3607BA00C2567D /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9D22CF542A3B6F26001EE215 /* Sphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
 		9DBEE6992A3607B900C2567D /* Globus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Globus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DBEE69C2A3607B900C2567D /* GlobusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobusApp.swift; sourceTree = "<group>"; };
 		9DBEE69E2A3607B900C2567D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -39,6 +41,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9D22CF532A3B6EF5001EE215 /* ParametricSurfaces */ = {
+			isa = PBXGroup;
+			children = (
+				9D22CF542A3B6F26001EE215 /* Sphere.swift */,
+			);
+			path = ParametricSurfaces;
+			sourceTree = "<group>";
+		};
 		9DBEE6902A3607B900C2567D = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +68,7 @@
 		9DBEE69B2A3607B900C2567D /* Globus */ = {
 			isa = PBXGroup;
 			children = (
+				9D22CF532A3B6EF5001EE215 /* ParametricSurfaces */,
 				9DBEE6B12A360CF600C2567D /* Shaders */,
 				9DBEE6AE2A3608E300C2567D /* RenderEngine */,
 				9DBEE6AB2A36084200C2567D /* GlobusView */,
@@ -174,6 +185,7 @@
 			files = (
 				9DBEE69F2A3607B900C2567D /* ContentView.swift in Sources */,
 				9DBEE6B32A360D1500C2567D /* GeneralShader.metal in Sources */,
+				9D22CF552A3B6F26001EE215 /* Sphere.swift in Sources */,
 				9DBEE6AD2A36086B00C2567D /* GlobusView.swift in Sources */,
 				9DBEE69D2A3607B900C2567D /* GlobusApp.swift in Sources */,
 				9DBEE6B02A36091C00C2567D /* RenderEngine.swift in Sources */,

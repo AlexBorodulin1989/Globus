@@ -13,8 +13,7 @@ class RenderEngine: NSObject {
 
     private var library: MTLLibrary!
 
-    private var mesh: MTKMesh!
-    private var vertexBuffer: MTLBuffer!
+    private var mesh: Sphere!
     private var pipelineState: MTLRenderPipelineState!
 
     init(mtkView: MTKView) {
@@ -25,6 +24,10 @@ class RenderEngine: NSObject {
         }
 
         self.device = device
+
+        mesh = Sphere(device: device,
+                      radius: 1,
+                      segmentsInfo: .init(uPartsNumber: 100, vPartsNumber: 100))
 
         super.init()
 
@@ -37,20 +40,6 @@ class RenderEngine: NSObject {
 
         mtkView.device = device
 
-        let allocator = MTKMeshBufferAllocator(device: device)
-        let size: Float = 0.8
-        let mdlMesh = MDLMesh(boxWithExtent: [size, size, size],
-                              segments: [1, 1, 1],
-                              inwardNormals: false,
-                              geometryType: .triangles,
-                              allocator: allocator)
-
-        do {
-            mesh = try MTKMesh(mesh: mdlMesh, device: device)
-        } catch let error {
-            fatalError(error.localizedDescription)
-        }
-        vertexBuffer = mesh.vertexBuffers[0].buffer
         self.library = device.makeDefaultLibrary()
         let vertexFunction = library?.makeFunction(name: "vertex_main")
         let fragmentFunction = library?.makeFunction(name: "fragment_main")
@@ -59,14 +48,14 @@ class RenderEngine: NSObject {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
-        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mdlMesh.vertexDescriptor)
+        pipelineDescriptor.vertexDescriptor = Sphere.layout
         do {
             pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch let error {
             fatalError(error.localizedDescription)
         }
 
-        mtkView.clearColor = MTLClearColor(red: 1.0,
+        mtkView.clearColor = MTLClearColor(red: 0.5,
                                              green: 0.5,
                                              blue: 0.5,
                                              alpha: 1.0)
@@ -89,14 +78,15 @@ extension RenderEngine: MTKViewDelegate {
         }
 
         renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        for submesh in mesh.submeshes {
-            renderEncoder.drawIndexedPrimitives(type: .triangle,
-                                                indexCount: submesh.indexCount,
-                                                indexType: submesh.indexType,
-                                                indexBuffer: submesh.indexBuffer.buffer,
-                                                indexBufferOffset: submesh.indexBuffer.offset)
-        }
+        renderEncoder.setVertexBuffer(mesh.vBuffer,
+                                      offset: 0,
+                                      index: 0)
+
+        renderEncoder.drawIndexedPrimitives(type: .point,
+                                            indexCount: mesh.indices.count,
+                                            indexType: .uint16,
+                                            indexBuffer: mesh.iBuffer,
+                                            indexBufferOffset: 0)
 
         renderEncoder.endEncoding()
 
