@@ -25,8 +25,8 @@ class Sphere {
 
         let uPart = Float.pi / Float(segmentsInfo.uPartsNumber)
         let vPart = 2 * Float.pi / Float(segmentsInfo.vPartsNumber)
-        for u in 0..<segmentsInfo.uPartsNumber {
-            for v in 0..<segmentsInfo.vPartsNumber {
+        for u in 0...segmentsInfo.uPartsNumber {
+            for v in 0...segmentsInfo.vPartsNumber {
                 result.append(contentsOf: positionForParams(u: uPart * Float(u), v: vPart * Float(v)))
             }
         }
@@ -40,8 +40,12 @@ class Sphere {
         for _ in 0..<segmentsInfo.uPartsNumber {
             for _ in 0..<segmentsInfo.vPartsNumber {
                 result.append(index)
+                result.append(index + 1)
+                result.append(index)
+                result.append(index + UInt16(segmentsInfo.vPartsNumber + 1))
                 index += 1
             }
+            index += 1
         }
 
         return result

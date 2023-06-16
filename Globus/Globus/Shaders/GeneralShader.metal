@@ -14,13 +14,11 @@ struct VertexIn {
 
 struct VertexOut {
     float4 pos [[position]];
-    float pointsize[[point_size]];
 };
 
 vertex VertexOut vertex_main(const VertexIn vertexIn [[stage_in]]) {
     VertexOut result;
     result.pos = vertexIn.position;
-    result.pointsize = 4;
     return result;
 }
 
