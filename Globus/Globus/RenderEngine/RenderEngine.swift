@@ -82,7 +82,9 @@ extension RenderEngine: MTKViewDelegate {
                                       offset: 0,
                                       index: 0)
 
-        renderEncoder.drawIndexedPrimitives(type: .line,
+        renderEncoder.setTriangleFillMode(.lines)
+
+        renderEncoder.drawIndexedPrimitives(type: .triangle,
                                             indexCount: mesh.indices.count,
                                             indexType: .uint16,
                                             indexBuffer: mesh.iBuffer,

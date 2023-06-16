@@ -41,8 +41,10 @@ class Sphere {
             for _ in 0..<segmentsInfo.vPartsNumber {
                 result.append(index)
                 result.append(index + 1)
-                result.append(index)
                 result.append(index + UInt16(segmentsInfo.vPartsNumber + 1))
+                result.append(index + UInt16(segmentsInfo.vPartsNumber + 1))
+                result.append(index + 1)
+                result.append(index + UInt16(segmentsInfo.vPartsNumber + 1) + 1)
                 index += 1
             }
             index += 1
