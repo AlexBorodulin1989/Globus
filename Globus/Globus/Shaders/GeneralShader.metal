@@ -8,6 +8,10 @@
 #include <metal_stdlib>
 using namespace metal;
 
+struct Camera {
+    float4x4 model;
+};
+
 struct VertexIn {
     float4 position [[attribute(0)]];
 };
@@ -16,9 +20,10 @@ struct VertexOut {
     float4 pos [[position]];
 };
 
-vertex VertexOut vertex_main(const VertexIn vertexIn [[stage_in]]) {
+vertex VertexOut vertex_main(const VertexIn vertexIn [[stage_in]],
+                             constant Camera &camera [[buffer(16)]]) {
     VertexOut result;
-    result.pos = vertexIn.position;
+    result.pos = camera.model * vertexIn.position;
     return result;
 }
 

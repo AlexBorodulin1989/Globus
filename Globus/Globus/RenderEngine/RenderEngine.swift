@@ -16,6 +16,8 @@ class RenderEngine: NSObject {
     private var mesh: Sphere!
     private var pipelineState: MTLRenderPipelineState!
 
+    var timer: Float = 0
+
     init(mtkView: MTKView) {
         guard
             let device = MTLCreateSystemDefaultDevice()
@@ -27,7 +29,7 @@ class RenderEngine: NSObject {
 
         mesh = Sphere(device: device,
                       radius: 1,
-                      segmentsInfo: .init(uPartsNumber: 100, vPartsNumber: 100))
+                      segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
 
         super.init()
 
@@ -83,6 +85,17 @@ extension RenderEngine: MTKViewDelegate {
                                       index: 0)
 
         renderEncoder.setTriangleFillMode(.lines)
+
+        timer += 0.1
+
+        let translation = float4x4(translation: [0, 0, -1])
+        let rotation = float4x4(rotation: [0, timer.degreesToRadians, 0])
+        let model = translation.inverse * rotation * translation
+        var cam = Camera(model: model)
+
+        renderEncoder.setVertexBytes(&cam,
+                                     length: MemoryLayout<Camera>.stride,
+                                     index: 16)
 
         renderEncoder.drawIndexedPrimitives(type: .triangle,
                                             indexCount: mesh.indices.count,
