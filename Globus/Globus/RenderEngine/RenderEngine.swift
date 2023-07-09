@@ -30,7 +30,7 @@ class RenderEngine: NSObject {
         self.device = device
 
         mesh = Sphere(device: device,
-                      radius: 1,
+                      radius: 0.5,
                       segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
 
         super.init()
@@ -103,19 +103,19 @@ extension RenderEngine: MTKViewDelegate {
 
         let projMatrix: matrix_float4x4
 
-        if aspectRatio < 1 { // width > height
+        if aspectRatio > 1 { // width > height
             projMatrix = matrix_float4x4([
-                SIMD4<Float>(1, 0, 0, 0),
-                SIMD4<Float>(0, 1/aspectRatio, 0, 0),
-                SIMD4<Float>(   0, 0, a, 1),
-                SIMD4<Float>(   0, 0, b, 0)
+                SIMD4<Float>(2,             0, 0, 0),
+                SIMD4<Float>(0, 2/aspectRatio, 0, 0),
+                SIMD4<Float>(0,             0, a, 1),
+                SIMD4<Float>(0,             0, b, 0)
             ])
         } else {
             projMatrix = matrix_float4x4([
-                SIMD4<Float>(aspectRatio, 0, 0, 0),
-                SIMD4<Float>(             0, 1, 0, 0),
-                SIMD4<Float>(             0, 0, a, 1),
-                SIMD4<Float>(             0, 0, b, 0)
+                SIMD4<Float>(2 * aspectRatio, 0, 0, 0),
+                SIMD4<Float>(              0, 2, 0, 0),
+                SIMD4<Float>(              0, 0, a, 1),
+                SIMD4<Float>(              0, 0, b, 0)
             ])
         }
 
