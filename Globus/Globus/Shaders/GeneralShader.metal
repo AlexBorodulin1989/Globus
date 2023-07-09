@@ -10,6 +10,7 @@ using namespace metal;
 
 struct Camera {
     float4x4 model;
+    float4x4 proj;
 };
 
 struct VertexIn {
@@ -23,7 +24,7 @@ struct VertexOut {
 vertex VertexOut vertex_main(const VertexIn vertexIn [[stage_in]],
                              constant Camera &camera [[buffer(16)]]) {
     VertexOut result;
-    result.pos = camera.model * vertexIn.position;
+    result.pos = camera.proj * camera.model * vertexIn.position;
     return result;
 }
 

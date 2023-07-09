@@ -18,6 +18,8 @@ class RenderEngine: NSObject {
 
     var timer: Float = 0
 
+    private(set) var aspectRatio: Float = 1
+
     init(mtkView: MTKView) {
         guard
             let device = MTLCreateSystemDefaultDevice()
@@ -69,7 +71,10 @@ class RenderEngine: NSObject {
 extension RenderEngine: MTKViewDelegate {
     func mtkView(_ view: MTKView,
                  drawableSizeWillChange size: CGSize
-    ) {}
+    ) {
+        let width = size.width > 1 ? size.width : 1
+        aspectRatio = Float(size.height / width)
+    }
 
     func draw(in view: MTKView) {
         guard
@@ -88,10 +93,36 @@ extension RenderEngine: MTKViewDelegate {
 
         timer += 0.1
 
+        let far: Float = 2
+        let near: Float = 1
+
+        let interval = far - near
+
+        let a = far / interval
+        let b = -far * near / interval
+
+        let projMatrix: matrix_float4x4
+
+        if aspectRatio < 1 { // width > height
+            projMatrix = matrix_float4x4([
+                SIMD4<Float>(1, 0, 0, 0),
+                SIMD4<Float>(0, 1/aspectRatio, 0, 0),
+                SIMD4<Float>(   0, 0, a, 1),
+                SIMD4<Float>(   0, 0, b, 0)
+            ])
+        } else {
+            projMatrix = matrix_float4x4([
+                SIMD4<Float>(aspectRatio, 0, 0, 0),
+                SIMD4<Float>(             0, 1, 0, 0),
+                SIMD4<Float>(             0, 0, a, 1),
+                SIMD4<Float>(             0, 0, b, 0)
+            ])
+        }
+
         let translation = float4x4(translation: [0, 0, -1])
         let rotation = float4x4(rotation: [0, timer.degreesToRadians, 0])
-        let model = translation.inverse * rotation * translation
-        var cam = Camera(model: model)
+        let model = translation.inverse * translation.inverse * rotation * translation
+        var cam = Camera(model: model, proj: projMatrix)
 
         renderEncoder.setVertexBytes(&cam,
                                      length: MemoryLayout<Camera>.stride,
