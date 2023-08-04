@@ -72,7 +72,6 @@
 		9DBEE6902A3607B900C2567D = {
 			isa = PBXGroup;
 			children = (
-				9D6B35F02A54B107004D5A10 /* Math */,
 				9DBEE69B2A3607B900C2567D /* Globus */,
 				9DBEE69A2A3607B900C2567D /* Products */,
 			);
@@ -89,6 +88,7 @@
 		9DBEE69B2A3607B900C2567D /* Globus */ = {
 			isa = PBXGroup;
 			children = (
+				9D6B35F02A54B107004D5A10 /* Math */,
 				9D6B35ED2A54AF87004D5A10 /* Camera */,
 				9D22CF532A3B6EF5001EE215 /* ParametricSurfaces */,
 				9DBEE6B12A360CF600C2567D /* Shaders */,
