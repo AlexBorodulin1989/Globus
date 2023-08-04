@@ -6,12 +6,8 @@
 //
 
 #include <metal_stdlib>
+#import "General.h"
 using namespace metal;
-
-struct Camera {
-    float4x4 model;
-    float4x4 proj;
-};
 
 struct VertexIn {
     float4 position [[attribute(0)]];
