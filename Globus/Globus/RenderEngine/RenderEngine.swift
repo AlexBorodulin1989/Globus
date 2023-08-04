@@ -91,7 +91,7 @@ extension RenderEngine: MTKViewDelegate {
 
         renderEncoder.setTriangleFillMode(.lines)
 
-        timer += 0.1
+        timer += 1
 
         let far: Float = 2
         let near: Float = 1
