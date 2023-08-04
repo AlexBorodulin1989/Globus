@@ -6,7 +6,7 @@
 //
 
 #include <metal_stdlib>
-#import "General.h"
+#import "../General.h"
 using namespace metal;
 
 struct VertexIn {
