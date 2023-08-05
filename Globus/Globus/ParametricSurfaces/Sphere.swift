@@ -20,14 +20,16 @@ class Sphere {
     private let radius: Float
     private let segmentsInfo: SegmentsInfo
 
-    var vertices: [float3] {
-        var result = [float3]()
+    var vertices: [Vertex] {
+        var result = [Vertex]()
 
         let uPart = Float.pi / Float(segmentsInfo.uPartsNumber)
         let vPart = 2 * Float.pi / Float(segmentsInfo.vPartsNumber)
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
-                result.append(positionForParams(u: uPart * Float(u), v: vPart * Float(v)))
+                var vertex = Vertex()
+                vertex.position = positionForParams(u: uPart * Float(u), v: vPart * Float(v))
+                result.append(vertex)
             }
         }
 
@@ -72,7 +74,7 @@ class Sphere {
 
         var vertices = self.vertices
         guard let vertexBuffer = device.makeBuffer(bytes: &vertices,
-                                                   length: MemoryLayout<float3>.stride * vertices.count,
+                                                   length: MemoryLayout<Vertex>.stride * vertices.count,
                                                    options: [])
         else {
             fatalError("Unable to create quad vertex buffer")
@@ -89,11 +91,11 @@ class Sphere {
         self.iBuffer = indexBuffer
     }
 
-    func positionForParams(u: Float, v: Float) -> float3 {
+    func positionForParams(u: Float, v: Float) -> float4 {
         let x = radius * sin(u) * cos(v)
         let y = radius * cos(u)
         let z = radius * sin(u) * sin(v)
 
-        return [x, y, z]
+        return [x, y, z, 1]
     }
 }

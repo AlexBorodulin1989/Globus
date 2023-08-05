@@ -15,4 +15,8 @@ typedef struct {
     matrix_float4x4 proj;
 } Camera;
 
+typedef struct {
+    vector_float4 position;
+} Vertex;
+
 #endif /* General_h */

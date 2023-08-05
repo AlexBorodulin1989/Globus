@@ -17,10 +17,11 @@ struct VertexOut {
     float4 pos [[position]];
 };
 
-vertex VertexOut vertex_main(const VertexIn vertexIn [[stage_in]],
-                             constant Camera &camera [[buffer(16)]]) {
+vertex VertexOut vertex_main(constant Vertex *vertices [[buffer(0)]],
+                             constant Camera &camera [[buffer(16)]],
+                             uint id [[vertex_id]]) {
     VertexOut result;
-    result.pos = camera.proj * camera.model * vertexIn.position;
+    result.pos = camera.proj * camera.model * vertices[id].position;
     return result;
 }
 
