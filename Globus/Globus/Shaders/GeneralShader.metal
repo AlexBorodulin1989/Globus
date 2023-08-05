@@ -9,10 +9,6 @@
 #import "../General.h"
 using namespace metal;
 
-struct VertexIn {
-    float4 position [[attribute(0)]];
-};
-
 struct VertexOut {
     float4 pos [[position]];
 };
