@@ -99,6 +99,6 @@ class Sphere {
         }
 
 
-        return [x, y, z + 1]
+        return [x, y, z]
     }
 }

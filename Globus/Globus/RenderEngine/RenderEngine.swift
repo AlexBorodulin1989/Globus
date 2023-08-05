@@ -119,9 +119,9 @@ extension RenderEngine: MTKViewDelegate {
             ])
         }
 
-        let translation = float4x4(translation: [0, 0, -1])
+        let translation = float4x4(translation: [0, 0, -2])
         let rotation = float4x4(rotation: [0, timer.degreesToRadians, 0])
-        let model = translation.inverse * translation.inverse * rotation * translation
+        let model = translation.inverse * rotation
         var cam = Camera(model: model, proj: projMatrix)
 
         renderEncoder.setVertexBytes(&cam,
