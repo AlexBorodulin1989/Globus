@@ -16,7 +16,8 @@ typedef struct {
 } Camera;
 
 typedef struct {
-    vector_float4 position;
+    vector_float3 position;
+    vector_float3 normal;
 } Vertex;
 
 #endif /* General_h */

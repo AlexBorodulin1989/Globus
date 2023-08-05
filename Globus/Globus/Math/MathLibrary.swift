@@ -226,3 +226,15 @@ extension float4 {
     self = [Float(d.x), Float(d.y), Float(d.z), Float(d.w)]
   }
 }
+
+// MARK: - float3
+extension float3 {
+    func normalized() -> float3 {
+        let mag = self.magnitude()
+        return [x/mag, y/mag, z/mag]
+    }
+
+    func magnitude() -> Float {
+        return sqrtf(x*x + y*y + z*z);
+    }
+}

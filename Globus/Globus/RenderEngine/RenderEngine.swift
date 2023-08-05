@@ -20,6 +20,8 @@ class RenderEngine: NSObject {
 
     private(set) var aspectRatio: Float = 1
 
+    private var depthState: MTLDepthStencilState!
+
     init(mtkView: MTKView) {
         guard
             let device = MTLCreateSystemDefaultDevice()
@@ -34,6 +36,13 @@ class RenderEngine: NSObject {
                       segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
 
         super.init()
+
+        guard
+            let depthState = createDepthState()
+        else {
+            fatalError("Fatal error: cannot create depth state")
+        }
+        self.depthState = depthState
 
         guard
             let commandQueue = device.makeCommandQueue()
@@ -53,6 +62,7 @@ class RenderEngine: NSObject {
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
         pipelineDescriptor.vertexDescriptor = Sphere.layout
+        pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
         do {
             pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch let error {
@@ -64,7 +74,18 @@ class RenderEngine: NSObject {
                                              blue: 0.5,
                                              alpha: 1.0)
 
+        mtkView.depthStencilPixelFormat = .depth32Float
+
         mtkView.delegate = self
+    }
+}
+
+extension RenderEngine {
+    func createDepthState() -> MTLDepthStencilState? {
+        let descriptor = MTLDepthStencilDescriptor()
+        descriptor.depthCompareFunction = .less
+        descriptor.isDepthWriteEnabled = true
+        return device.makeDepthStencilState(descriptor: descriptor)
     }
 }
 
@@ -84,12 +105,14 @@ extension RenderEngine: MTKViewDelegate {
             return
         }
 
+        renderEncoder.setDepthStencilState(depthState)
+
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setVertexBuffer(mesh.vBuffer,
                                       offset: 0,
                                       index: 0)
 
-        renderEncoder.setTriangleFillMode(.lines)
+        //renderEncoder.setTriangleFillMode(.lines)
 
         timer += 1
 

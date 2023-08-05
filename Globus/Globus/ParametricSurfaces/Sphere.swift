@@ -29,6 +29,7 @@ class Sphere {
             for v in 0...segmentsInfo.vPartsNumber {
                 var vertex = Vertex()
                 vertex.position = positionForParams(u: uPart * Float(u), v: vPart * Float(v))
+                vertex.normal = vertex.position.normalized()
                 result.append(vertex)
             }
         }
@@ -60,8 +61,13 @@ class Sphere {
         vertexDescriptor.attributes[0].format = .float3
         vertexDescriptor.attributes[0].offset = 0
         vertexDescriptor.attributes[0].bufferIndex = 0
+        var stride = MemoryLayout<float3>.stride
 
-        let stride = MemoryLayout<float3>.stride
+        vertexDescriptor.attributes[1].format = .float3
+        vertexDescriptor.attributes[1].offset = stride
+        vertexDescriptor.attributes[1].bufferIndex = 0
+        stride += MemoryLayout<float3>.stride
+
         vertexDescriptor.layouts[0].stride = stride
         return vertexDescriptor
     }
@@ -91,11 +97,11 @@ class Sphere {
         self.iBuffer = indexBuffer
     }
 
-    func positionForParams(u: Float, v: Float) -> float4 {
+    func positionForParams(u: Float, v: Float) -> float3 {
         let x = radius * sin(u) * cos(v)
         let y = radius * cos(u)
         let z = radius * sin(u) * sin(v)
 
-        return [x, y, z, 1]
+        return [x, y, z]
     }
 }
