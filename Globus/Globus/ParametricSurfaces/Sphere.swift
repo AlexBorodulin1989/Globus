@@ -23,13 +23,16 @@ class Sphere {
     var vertices: [Vertex] {
         var result = [Vertex]()
 
-        let uPart = Float.pi / Float(segmentsInfo.uPartsNumber)
-        let vPart = 2 * Float.pi / Float(segmentsInfo.vPartsNumber)
+        let uPart = 1 / Float(segmentsInfo.uPartsNumber)
+        let vPart = 1 / Float(segmentsInfo.vPartsNumber)
+        let uPartAngle = Float.pi * uPart
+        let vPartAngle = 2 * Float.pi * vPart
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
                 var vertex = Vertex()
-                vertex.position = positionForParams(u: uPart * Float(u), v: vPart * Float(v))
+                vertex.position = positionForParams(u: uPartAngle * Float(u), v: vPartAngle * Float(v))
                 vertex.normal = vertex.position.normalized()
+                vertex.uv = float2(x: vPart * Float(v), y: uPart * Float(u))
                 result.append(vertex)
             }
         }
@@ -67,6 +70,11 @@ class Sphere {
         vertexDescriptor.attributes[1].offset = stride
         vertexDescriptor.attributes[1].bufferIndex = 0
         stride += MemoryLayout<float3>.stride
+
+        vertexDescriptor.attributes[2].format = .float2
+        vertexDescriptor.attributes[2].offset = stride
+        vertexDescriptor.attributes[2].bufferIndex = 0
+        stride += MemoryLayout<float2>.stride
 
         vertexDescriptor.layouts[0].stride = stride
         return vertexDescriptor

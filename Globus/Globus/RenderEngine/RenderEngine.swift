@@ -16,6 +16,8 @@ class RenderEngine: NSObject {
     private var mesh: Sphere!
     private var pipelineState: MTLRenderPipelineState!
 
+    private let texture: MTLTexture?
+
     var timer: Float = 0
 
     private(set) var aspectRatio: Float = 1
@@ -34,6 +36,8 @@ class RenderEngine: NSObject {
         mesh = Sphere(device: device,
                       radius: 0.5,
                       segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
+
+        texture = TextureController.texture(filename: "mapTexture.png", device: device)
 
         super.init()
 
@@ -111,6 +115,11 @@ extension RenderEngine: MTKViewDelegate {
         renderEncoder.setVertexBuffer(mesh.vBuffer,
                                       offset: 0,
                                       index: 0)
+
+        if let texture {
+            renderEncoder.setFragmentTexture(texture,
+                                             index: MainTexture.index)
+        }
 
         //renderEncoder.setTriangleFillMode(.lines)
 

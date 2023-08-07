@@ -18,6 +18,11 @@ typedef struct {
 typedef struct {
     vector_float3 position;
     vector_float3 normal;
+    vector_float2 uv;
 } Vertex;
+
+typedef enum {
+    MainTexture = 0
+} TexturesIndex;
 
 #endif /* General_h */
