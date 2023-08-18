@@ -11,6 +11,7 @@
 		9D0AB9772A8176A200946AF1 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0AB9762A8176A200946AF1 /* TextureController.swift */; };
 		9D0AB97A2A81780700946AF1 /* TexturesIndex+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0AB9792A81780700946AF1 /* TexturesIndex+Extensions.swift */; };
 		9D22CF552A3B6F26001EE215 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D22CF542A3B6F26001EE215 /* Sphere.swift */; };
+		9D65F37C2A8F5EA4001C299E /* map_equirectangular.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D65F37B2A8F5EA4001C299E /* map_equirectangular.png */; };
 		9D6B35F22A54B112004D5A10 /* MathLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B35F12A54B112004D5A10 /* MathLibrary.swift */; };
 		9DBEE69D2A3607B900C2567D /* GlobusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEE69C2A3607B900C2567D /* GlobusApp.swift */; };
 		9DBEE69F2A3607B900C2567D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEE69E2A3607B900C2567D /* ContentView.swift */; };
@@ -26,6 +27,7 @@
 		9D0AB9762A8176A200946AF1 /* TextureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
 		9D0AB9792A81780700946AF1 /* TexturesIndex+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TexturesIndex+Extensions.swift"; sourceTree = "<group>"; };
 		9D22CF542A3B6F26001EE215 /* Sphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
+		9D65F37B2A8F5EA4001C299E /* map_equirectangular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_equirectangular.png; sourceTree = "<group>"; };
 		9D6B35F12A54B112004D5A10 /* MathLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathLibrary.swift; sourceTree = "<group>"; };
 		9DA6A6BF2A7CB0E7004EE112 /* General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = General.h; sourceTree = "<group>"; };
 		9DBEE6992A3607B900C2567D /* Globus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Globus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,6 +55,7 @@
 		9D0AB9722A8170D100946AF1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9D65F37B2A8F5EA4001C299E /* map_equirectangular.png */,
 				9D0AB9732A8170F900946AF1 /* mapTexture.png */,
 			);
 			path = Resources;
@@ -220,6 +223,7 @@
 				9D0AB9742A8170F900946AF1 /* mapTexture.png in Resources */,
 				9DBEE6A52A3607BA00C2567D /* Preview Assets.xcassets in Resources */,
 				9DBEE6A12A3607BA00C2567D /* Assets.xcassets in Resources */,
+				9D65F37C2A8F5EA4001C299E /* map_equirectangular.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

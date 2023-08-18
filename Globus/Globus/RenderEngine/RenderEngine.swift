@@ -37,7 +37,7 @@ class RenderEngine: NSObject {
                       radius: 0.5,
                       segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
 
-        texture = TextureController.texture(filename: "mapTexture.png", device: device)
+        texture = TextureController.texture(filename: "map_equirectangular.png", device: device)
 
         super.init()
 
