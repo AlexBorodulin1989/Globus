@@ -13,7 +13,7 @@ class RenderEngine: NSObject {
 
     private var library: MTLLibrary!
 
-    private var mesh: Sphere!
+    private var mesh: GlobusSphere!
     private var pipelineState: MTLRenderPipelineState!
 
     private let texture: MTLTexture?
@@ -33,9 +33,9 @@ class RenderEngine: NSObject {
 
         self.device = device
 
-        mesh = Sphere(device: device,
-                      radius: 0.5,
-                      segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
+        mesh = GlobusSphere(device: device,
+                            radius: 0.5,
+                            segmentsInfo: .init(uPartsNumber: 16, vPartsNumber: 16))
 
         texture = TextureController.texture(filename: "map_equirectangular.png", device: device)
 
@@ -65,7 +65,7 @@ class RenderEngine: NSObject {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
-        pipelineDescriptor.vertexDescriptor = Sphere.layout
+        pipelineDescriptor.vertexDescriptor = GlobusSphere.layout
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
         do {
             pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -152,7 +152,7 @@ extension RenderEngine: MTKViewDelegate {
         }
 
         let translation = float4x4(translation: [0, 0, -2])
-        let rotation = float4x4(rotation: [0, timer.degreesToRadians, 0])
+        let rotation = float4x4(rotation: [timer.degreesToRadians, timer.degreesToRadians, 0])
         let model = translation.inverse * rotation
         var cam = Camera(model: model, proj: projMatrix)
 

@@ -13,24 +13,29 @@ struct SegmentsInfo {
     let vPartsNumber: Int
 }
 
-class Sphere {
+class GlobusSphere {
     var vBuffer: MTLBuffer!
     var iBuffer: MTLBuffer!
 
     private let radius: Float
     private let segmentsInfo: SegmentsInfo
 
+    private let limitAngle: Float = 1.48442223321
+
     var vertices: [Vertex] {
         var result = [Vertex]()
 
         let uPart = 1 / Float(segmentsInfo.uPartsNumber)
         let vPart = 1 / Float(segmentsInfo.vPartsNumber)
-        let uPartAngle = Float.pi * uPart
+        let uPartAngle = limitAngle * 2 * uPart
         let vPartAngle = 2 * Float.pi * vPart
+        let startUAngle = (Float.pi - limitAngle * 2) * 0.5
+
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
                 var vertex = Vertex()
-                vertex.position = positionForParams(u: uPartAngle * Float(u), v: vPartAngle * Float(v))
+                vertex.position = positionForParams(u: uPartAngle * Float(u) + startUAngle,
+                                                    v: vPartAngle * Float(v))
                 vertex.normal = vertex.position.normalized()
                 vertex.uv = float2(x: vPart * Float(v), y: uPart * Float(u))
                 result.append(vertex)
