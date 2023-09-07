@@ -16,8 +16,6 @@ class Tile {
 
     private let radius: Double
 
-    private var timer: Float = 0
-
     var vBuffer: MTLBuffer!
     var iBuffer: MTLBuffer!
 
@@ -87,46 +85,9 @@ extension Tile {
     func draw(engine: RenderEngine,
               encoder: MTLRenderCommandEncoder,
               aspectRatio: Float) {
-        timer += 1
-        
-        let far: Float = 2
-        let near: Float = 1
-
-        let interval = far - near
-
-        let a = far / interval
-        let b = -far * near / interval
-
-        let projMatrix: matrix_float4x4
-
-        if aspectRatio > 1 { // width > height
-            projMatrix = matrix_float4x4([
-                SIMD4<Float>(2,             0, 0, 0),
-                SIMD4<Float>(0, 2/aspectRatio, 0, 0),
-                SIMD4<Float>(0,             0, a, 1),
-                SIMD4<Float>(0,             0, b, 0)
-            ])
-        } else {
-            projMatrix = matrix_float4x4([
-                SIMD4<Float>(2 * aspectRatio, 0, 0, 0),
-                SIMD4<Float>(              0, 2, 0, 0),
-                SIMD4<Float>(              0, 0, a, 1),
-                SIMD4<Float>(              0, 0, b, 0)
-            ])
-        }
-
-        let translation = float4x4(translation: [0, 0, -2])
-        let rotation = float4x4(rotation: [timer.degreesToRadians, timer.degreesToRadians, 0])
-        let model = translation.inverse * rotation
-        var cam = Camera(model: model, proj: projMatrix)
-
         encoder.setVertexBuffer(vBuffer,
                                 offset: 0,
                                 index: 0)
-
-        encoder.setVertexBytes(&cam,
-                               length: MemoryLayout<Camera>.stride,
-                               index: 16)
 
         encoder.drawIndexedPrimitives(type: .triangle,
                                       indexCount: indices.count,
