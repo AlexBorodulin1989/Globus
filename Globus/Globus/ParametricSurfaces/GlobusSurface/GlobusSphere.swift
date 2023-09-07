@@ -13,31 +13,35 @@ struct SegmentsInfo {
     let vPartsNumber: Int
 }
 
-class GlobusSphere {
-    var vBuffer: MTLBuffer!
-    var iBuffer: MTLBuffer!
+struct AccurateVertex {
+    let u: Double
+    let v: Double
+    let texCoord: double2
+}
 
-    private let radius: Float
+class GlobusSphere {
+
     private let segmentsInfo: SegmentsInfo
 
-    private let limitAngle: Float = 1.48442223321
+    private let limitAngle: Double = 1.48442223321
 
-    var vertices: [Vertex] {
-        var result = [Vertex]()
+    var rootTiles = [Tile]()
 
-        let uPart = 1 / Float(segmentsInfo.uPartsNumber)
-        let vPart = 1 / Float(segmentsInfo.vPartsNumber)
-        let uPartAngle = limitAngle * 2 * uPart
-        let vPartAngle = 2 * Float.pi * vPart
-        let startUAngle = (Float.pi - limitAngle * 2) * 0.5
+    var vertices: [AccurateVertex] {
+        var result = [AccurateVertex]()
+
+        let uPart: Double = 1.0 / Double(segmentsInfo.uPartsNumber)
+        let vPart: Double = 1.0 / Double(segmentsInfo.vPartsNumber)
+        let uPartAngle: Double = limitAngle * 2.0 * uPart
+        let vPartAngle: Double = 2.0 * Double.pi * vPart
+        let startUAngle: Double = (Double.pi - limitAngle * 2) * 0.5
 
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
-                var vertex = Vertex()
-                vertex.position = positionForParams(u: uPartAngle * Float(u) + startUAngle,
-                                                    v: vPartAngle * Float(v))
-                vertex.normal = vertex.position.normalized()
-                vertex.uv = float2(x: vPart * Float(v), y: uPart * Float(u))
+                var vertex = AccurateVertex(u: uPartAngle * Double(u) + startUAngle,
+                                            v: vPartAngle * Double(v), texCoord: double2(x: vPart * Double(v),
+                                                                                         y: uPart * Double(u)))
+                //vertex.normal = vertex.position.normalized()
                 result.append(vertex)
             }
         }
@@ -53,8 +57,6 @@ class GlobusSphere {
                 result.append(index)
                 result.append(index + 1)
                 result.append(index + UInt16(segmentsInfo.vPartsNumber + 1))
-                result.append(index + UInt16(segmentsInfo.vPartsNumber + 1))
-                result.append(index + 1)
                 result.append(index + UInt16(segmentsInfo.vPartsNumber + 1) + 1)
                 index += 1
             }
@@ -86,35 +88,38 @@ class GlobusSphere {
     }
 
     init(device: MTLDevice,
-         radius: Float,
+         radius: Double,
          segmentsInfo: SegmentsInfo) {
-        self.radius = radius
         self.segmentsInfo = segmentsInfo
 
         var vertices = self.vertices
-        guard let vertexBuffer = device.makeBuffer(bytes: &vertices,
-                                                   length: MemoryLayout<Vertex>.stride * vertices.count,
-                                                   options: [])
-        else {
-            fatalError("Unable to create quad vertex buffer")
-        }
-        self.vBuffer = vertexBuffer
 
         var indices = self.indices
-        guard let indexBuffer = device.makeBuffer(bytes: &indices,
-                                                  length: MemoryLayout<UInt16>.stride * indices.count)
-        else {
-            fatalError("Unable to create quad index buffer")
+
+        let tilesCount = indices.count / 4
+
+        for tileIndex in 0..<tilesCount {
+            let startIndex = tileIndex * 4
+            let tile = Tile(device: device,
+                            bottomRightVert: vertices[Int(indices[startIndex])],
+                            bottomLeftVert: vertices[Int(indices[startIndex + 1])],
+                            topRightVert: vertices[Int(indices[startIndex + 2])],
+                            topLeftVert: vertices[Int(indices[startIndex + 3])],
+                            radius: radius)
+
+            rootTiles.append(tile)
         }
-
-        self.iBuffer = indexBuffer
     }
+}
 
-    func positionForParams(u: Float, v: Float) -> float3 {
-        let x = radius * sin(u) * cos(v)
-        let y = radius * cos(u)
-        let z = radius * sin(u) * sin(v)
-
-        return [x, y, z]
+extension GlobusSphere {
+    func draw(engine: RenderEngine,
+              encoder: MTLRenderCommandEncoder,
+              aspectRatio: Float) {
+        rootTiles.forEach { tile in
+            tile.draw(engine: engine,
+                      encoder: encoder,
+                      aspectRatio: aspectRatio)
+        }
     }
 }

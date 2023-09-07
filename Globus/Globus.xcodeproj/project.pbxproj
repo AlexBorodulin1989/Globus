@@ -10,7 +10,7 @@
 		9D0AB9742A8170F900946AF1 /* mapTexture.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D0AB9732A8170F900946AF1 /* mapTexture.png */; };
 		9D0AB9772A8176A200946AF1 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0AB9762A8176A200946AF1 /* TextureController.swift */; };
 		9D0AB97A2A81780700946AF1 /* TexturesIndex+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0AB9792A81780700946AF1 /* TexturesIndex+Extensions.swift */; };
-		9D22CF552A3B6F26001EE215 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D22CF542A3B6F26001EE215 /* Sphere.swift */; };
+		9D22CF552A3B6F26001EE215 /* GlobusSphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D22CF542A3B6F26001EE215 /* GlobusSphere.swift */; };
 		9D65F37C2A8F5EA4001C299E /* map_equirectangular.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D65F37B2A8F5EA4001C299E /* map_equirectangular.png */; };
 		9D6B35F22A54B112004D5A10 /* MathLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B35F12A54B112004D5A10 /* MathLibrary.swift */; };
 		9D80DEB02AAA3CEA008BE792 /* 3-1-3_rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D80DE702AAA3CE8008BE792 /* 3-1-3_rect.png */; };
@@ -77,6 +77,7 @@
 		9D80DEED2AAA3CEA008BE792 /* 3-6-3_rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D80DEAD2AAA3CEA008BE792 /* 3-6-3_rect.png */; };
 		9D80DEEE2AAA3CEA008BE792 /* 3-3-1_rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D80DEAE2AAA3CEA008BE792 /* 3-3-1_rect.png */; };
 		9D80DEEF2AAA3CEA008BE792 /* 3-6-5_rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9D80DEAF2AAA3CEA008BE792 /* 3-6-5_rect.png */; };
+		9D80DEF22AAA3E31008BE792 /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D80DEF12AAA3E31008BE792 /* Tile.swift */; };
 		9DBEE69D2A3607B900C2567D /* GlobusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEE69C2A3607B900C2567D /* GlobusApp.swift */; };
 		9DBEE69F2A3607B900C2567D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBEE69E2A3607B900C2567D /* ContentView.swift */; };
 		9DBEE6A12A3607BA00C2567D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DBEE6A02A3607BA00C2567D /* Assets.xcassets */; };
@@ -90,7 +91,7 @@
 		9D0AB9732A8170F900946AF1 /* mapTexture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mapTexture.png; sourceTree = "<group>"; };
 		9D0AB9762A8176A200946AF1 /* TextureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
 		9D0AB9792A81780700946AF1 /* TexturesIndex+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TexturesIndex+Extensions.swift"; sourceTree = "<group>"; };
-		9D22CF542A3B6F26001EE215 /* Sphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
+		9D22CF542A3B6F26001EE215 /* GlobusSphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobusSphere.swift; sourceTree = "<group>"; };
 		9D65F37B2A8F5EA4001C299E /* map_equirectangular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_equirectangular.png; sourceTree = "<group>"; };
 		9D6B35F12A54B112004D5A10 /* MathLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathLibrary.swift; sourceTree = "<group>"; };
 		9D80DE702AAA3CE8008BE792 /* 3-1-3_rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3-1-3_rect.png"; sourceTree = "<group>"; };
@@ -157,6 +158,7 @@
 		9D80DEAD2AAA3CEA008BE792 /* 3-6-3_rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3-6-3_rect.png"; sourceTree = "<group>"; };
 		9D80DEAE2AAA3CEA008BE792 /* 3-3-1_rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3-3-1_rect.png"; sourceTree = "<group>"; };
 		9D80DEAF2AAA3CEA008BE792 /* 3-6-5_rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3-6-5_rect.png"; sourceTree = "<group>"; };
+		9D80DEF12AAA3E31008BE792 /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		9DA6A6BF2A7CB0E7004EE112 /* General.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = General.h; sourceTree = "<group>"; };
 		9DBEE6992A3607B900C2567D /* Globus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Globus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DBEE69C2A3607B900C2567D /* GlobusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobusApp.swift; sourceTree = "<group>"; };
@@ -209,7 +211,7 @@
 		9D22CF532A3B6EF5001EE215 /* ParametricSurfaces */ = {
 			isa = PBXGroup;
 			children = (
-				9D22CF542A3B6F26001EE215 /* Sphere.swift */,
+				9D80DEF02AAA3DDA008BE792 /* GlobusSurface */,
 			);
 			path = ParametricSurfaces;
 			sourceTree = "<group>";
@@ -291,6 +293,15 @@
 				9D80DE982AAA3CE9008BE792 /* 3-7-7_rect.png */,
 			);
 			path = zoom_3;
+			sourceTree = "<group>";
+		};
+		9D80DEF02AAA3DDA008BE792 /* GlobusSurface */ = {
+			isa = PBXGroup;
+			children = (
+				9D22CF542A3B6F26001EE215 /* GlobusSphere.swift */,
+				9D80DEF12AAA3E31008BE792 /* Tile.swift */,
+			);
+			path = GlobusSurface;
 			sourceTree = "<group>";
 		};
 		9DBEE6902A3607B900C2567D = {
@@ -501,10 +512,11 @@
 				9D0AB97A2A81780700946AF1 /* TexturesIndex+Extensions.swift in Sources */,
 				9DBEE69F2A3607B900C2567D /* ContentView.swift in Sources */,
 				9DBEE6B32A360D1500C2567D /* GeneralShader.metal in Sources */,
-				9D22CF552A3B6F26001EE215 /* Sphere.swift in Sources */,
+				9D22CF552A3B6F26001EE215 /* GlobusSphere.swift in Sources */,
 				9D6B35F22A54B112004D5A10 /* MathLibrary.swift in Sources */,
 				9DBEE6AD2A36086B00C2567D /* GlobusView.swift in Sources */,
 				9DBEE69D2A3607B900C2567D /* GlobusApp.swift in Sources */,
+				9D80DEF22AAA3E31008BE792 /* Tile.swift in Sources */,
 				9DBEE6B02A36091C00C2567D /* RenderEngine.swift in Sources */,
 				9D0AB9772A8176A200946AF1 /* TextureController.swift in Sources */,
 			);

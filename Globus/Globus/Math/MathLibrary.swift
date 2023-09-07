@@ -43,6 +43,10 @@ typealias float2 = SIMD2<Float>
 typealias float3 = SIMD3<Float>
 typealias float4 = SIMD4<Float>
 
+typealias double2 = SIMD2<Double>
+typealias double3 = SIMD3<Double>
+typealias double4 = SIMD4<Double>
+
 let π = Float.pi
 
 extension Float {
