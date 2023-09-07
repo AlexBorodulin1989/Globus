@@ -94,9 +94,8 @@ class GlobusSphere {
          segmentsInfo: SegmentsInfo) {
         self.segmentsInfo = segmentsInfo
 
-        var vertices = self.vertices
-
-        var indices = self.indices
+        let vertices = self.vertices
+        let indices = self.indices
 
         let tilesCount = indices.count / 4
 
