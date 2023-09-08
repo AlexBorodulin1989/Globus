@@ -117,21 +117,7 @@ extension RenderEngine: MTKViewDelegate {
             return
         }
 
-        let timeInterval = NSDate().timeIntervalSince1970
-
-        let timeDif = timeInterval - lastTimeInterval
-
-        timeElapsed += timeDif
-
-        if timeElapsed > 1 {
-            timeElapsed = timeElapsed - 1
-            RenderInfo.fps = fps
-            fps = 0
-        } else {
-            fps += 1
-        }
-
-        lastTimeInterval = timeInterval
+        fpsCalculator()
 
         renderEncoder.setDepthStencilState(depthState)
 
@@ -155,5 +141,23 @@ extension RenderEngine: MTKViewDelegate {
         commandBuffer.present(drawable)
 
         commandBuffer.commit()
+    }
+
+    func fpsCalculator() {
+        let timeInterval = NSDate().timeIntervalSince1970
+
+        let timeDif = timeInterval - lastTimeInterval
+
+        timeElapsed += timeDif
+
+        if timeElapsed > 1 {
+            timeElapsed = timeElapsed - 1
+            RenderInfo.fps = fps
+            fps = 0
+        } else {
+            fps += 1
+        }
+
+        lastTimeInterval = timeInterval
     }
 }
