@@ -19,7 +19,7 @@ class Tile {
     var vBuffer: MTLBuffer!
     var iBuffer: MTLBuffer!
 
-    var vertices: [Vertex] {
+    lazy var vertices: [Vertex] = {
         var result = [Vertex]()
 
         [bottomRightVert,
@@ -35,11 +35,11 @@ class Tile {
         }
 
         return result
-    }
+    }()
 
-    var indices: [UInt16] {
+    lazy var indices: [UInt16] = {
         return [0, 1, 2, 2, 1, 3]
-    }
+    }()
 
     init(device: MTLDevice,
          bottomRightVert: AccurateVertex,
@@ -53,7 +53,6 @@ class Tile {
         self.topLeftVert = topLeftVert
         self.radius = radius
 
-        var vertices = self.vertices
         guard let vertexBuffer = device.makeBuffer(bytes: &vertices,
                                                    length: MemoryLayout<Vertex>.stride * vertices.count,
                                                    options: [])
@@ -62,7 +61,6 @@ class Tile {
         }
         self.vBuffer = vertexBuffer
 
-        var indices = self.indices
         guard let indexBuffer = device.makeBuffer(bytes: &indices,
                                                   length: MemoryLayout<UInt16>.stride * indices.count)
         else {
