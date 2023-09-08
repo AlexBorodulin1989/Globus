@@ -7,6 +7,10 @@
 
 import MetalKit
 
+enum RenderInfo {
+    static var fps: Int = 0
+}
+
 class RenderEngine: NSObject {
     private var device: MTLDevice
     private var commandQueue: MTLCommandQueue!
@@ -21,6 +25,12 @@ class RenderEngine: NSObject {
     private(set) var aspectRatio: Float = 1
 
     private var depthState: MTLDepthStencilState!
+
+    private var fps = 0
+
+    private var lastTimeInterval: TimeInterval = NSDate().timeIntervalSince1970
+
+    private var timeElapsed: Double = 0
 
     init(mtkView: MTKView) {
         guard
@@ -106,6 +116,22 @@ extension RenderEngine: MTKViewDelegate {
             let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
             return
         }
+
+        let timeInterval = NSDate().timeIntervalSince1970
+
+        let timeDif = timeInterval - lastTimeInterval
+
+        timeElapsed += timeDif
+
+        if timeElapsed > 1 {
+            timeElapsed = timeElapsed - 1
+            RenderInfo.fps = fps
+            fps = 0
+        } else {
+            fps += 1
+        }
+
+        lastTimeInterval = timeInterval
 
         renderEncoder.setDepthStencilState(depthState)
 
