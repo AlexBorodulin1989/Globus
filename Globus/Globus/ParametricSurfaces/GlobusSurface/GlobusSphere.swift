@@ -123,9 +123,10 @@ extension GlobusSphere {
         let near: Float = 1
 
         let interval = far - near
+        let invInterval = 1 / interval
 
-        let a = far / interval
-        let b = -far * near / interval
+        let a = far * invInterval
+        let b = -far * near * invInterval
 
         let projMatrix: matrix_float4x4
 

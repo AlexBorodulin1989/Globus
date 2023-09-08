@@ -28,7 +28,7 @@ class RenderEngine: NSObject {
 
     private var fps = 0
 
-    private var lastTimeInterval: TimeInterval = NSDate().timeIntervalSince1970
+    private var lastTimeInterval = CFAbsoluteTimeGetCurrent()
 
     private var timeElapsed: Double = 0
 
@@ -144,7 +144,7 @@ extension RenderEngine: MTKViewDelegate {
     }
 
     func fpsCalculator() {
-        let timeInterval = NSDate().timeIntervalSince1970
+        let timeInterval = CFAbsoluteTimeGetCurrent()
 
         let timeDif = timeInterval - lastTimeInterval
 
