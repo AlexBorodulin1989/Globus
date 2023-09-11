@@ -37,7 +37,7 @@ enum TextureController {
 
     static func loadTexture(filename: String, device: MTLDevice) throws -> MTLTexture? {
         let textureLoader = MTKTextureLoader(device: device)
-        let textureLoaderOptions: [MTKTextureLoader.Option: Any] = [.origin: MTKTextureLoader.Origin.topLeft]
+        let textureLoaderOptions: [MTKTextureLoader.Option: Any] = [.origin: MTKTextureLoader.Origin.bottomLeft]
 
         let fileExtension = URL(fileURLWithPath: filename).pathExtension.isEmpty ? "png" : nil
 

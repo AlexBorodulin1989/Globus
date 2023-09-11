@@ -16,7 +16,6 @@ struct SegmentsInfo {
 struct AccurateVertex {
     let u: Double
     let v: Double
-    let texCoord: double2
 }
 
 class GlobusSphere {
@@ -41,9 +40,7 @@ class GlobusSphere {
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
                 var vertex = AccurateVertex(u: uPartAngle * Double(u) + startUAngle,
-                                            v: vPartAngle * Double(v),
-                                            texCoord: double2(x: vPart * Double(v),
-                                                              y: uPart * Double(u)))
+                                            v: vPartAngle * Double(v))
                 //vertex.normal = vertex.position.normalized()
                 result.append(vertex)
             }
@@ -102,8 +99,9 @@ class GlobusSphere {
 
         for tileIndex in 0..<tilesCount {
             let startIndex = tileIndex * 4
-            let x = startIndex % 8
-            let y = startIndex / 8
+            let x = 7 - tileIndex % segmentsInfo.uPartsNumber
+            let y = tileIndex / segmentsInfo.vPartsNumber
+
             let tile = Tile(device: device,
                             bottomRightVert: vertices[Int(indices[startIndex])],
                             bottomLeftVert: vertices[Int(indices[startIndex + 1])],

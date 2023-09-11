@@ -27,15 +27,22 @@ class Tile {
     lazy var vertices: [Vertex] = {
         var result = [Vertex]()
 
+        let texCoordinates = [float2(1.0, 1.0),
+                              float2(0.0, 1.0),
+                              float2(1.0, 0.0),
+                              float2(0.0, 0.0)]
+
+        var texIndex = -1
+
         [bottomRightVert,
          bottomLeftVert,
          topRightVert,
          topLeftVert].forEach { vert in
+            texIndex += 1
             let position = positionForParams(u: vert.u, v: vert.v)
             let vertex = Vertex(position: positionForParams(u: vert.u, v: vert.v),
                                 normal: position.normalized(),
-                                uv: float2(Float(vert.texCoord.x),
-                                           Float(vert.texCoord.y)))
+                                uv: texCoordinates[texIndex])
             result.append(vertex)
         }
 
@@ -64,7 +71,7 @@ class Tile {
         self.x = x
         self.y = y
 
-        tileTexture = TextureController.texture(filename: "map_equirectangular.png", device: device)
+        tileTexture = TextureController.texture(filename: "\(zoom)-\(x)-\(y)_rect.png", device: device)
 
         guard let vertexBuffer = device.makeBuffer(bytes: &vertices,
                                                    length: MemoryLayout<Vertex>.stride * vertices.count,
