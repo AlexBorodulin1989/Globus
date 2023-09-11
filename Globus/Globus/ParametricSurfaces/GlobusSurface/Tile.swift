@@ -9,15 +9,20 @@ import Foundation
 import MetalKit
 
 class Tile {
-    let bottomRightVert: AccurateVertex
-    let bottomLeftVert: AccurateVertex
-    let topRightVert: AccurateVertex
-    let topLeftVert: AccurateVertex
+    private let bottomRightVert: AccurateVertex
+    private let bottomLeftVert: AccurateVertex
+    private let topRightVert: AccurateVertex
+    private let topLeftVert: AccurateVertex
 
     private let radius: Double
+    private let zoom: Int
+    private let x: Int
+    private let y: Int
 
     var vBuffer: MTLBuffer!
     var iBuffer: MTLBuffer!
+
+    private let tileTexture: MTLTexture?
 
     lazy var vertices: [Vertex] = {
         var result = [Vertex]()
@@ -46,12 +51,20 @@ class Tile {
          bottomLeftVert: AccurateVertex,
          topRightVert: AccurateVertex,
          topLeftVert: AccurateVertex,
-         radius: Double) {
+         radius: Double,
+         zoom: Int,
+         x: Int,
+         y: Int) {
         self.bottomRightVert = bottomRightVert
         self.bottomLeftVert = bottomLeftVert
         self.topRightVert = topRightVert
         self.topLeftVert = topLeftVert
         self.radius = radius
+        self.zoom = zoom
+        self.x = x
+        self.y = y
+
+        tileTexture = TextureController.texture(filename: "map_equirectangular.png", device: device)
 
         guard let vertexBuffer = device.makeBuffer(bytes: &vertices,
                                                    length: MemoryLayout<Vertex>.stride * vertices.count,
@@ -83,6 +96,11 @@ extension Tile {
     func draw(engine: RenderEngine,
               encoder: MTLRenderCommandEncoder,
               aspectRatio: Float) {
+        if let tileTexture {
+            encoder.setFragmentTexture(tileTexture,
+                                       index: MainTexture.index)
+        }
+
         encoder.setVertexBuffer(vBuffer,
                                 offset: 0,
                                 index: 0)

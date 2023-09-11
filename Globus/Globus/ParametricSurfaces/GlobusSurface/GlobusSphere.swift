@@ -41,8 +41,9 @@ class GlobusSphere {
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
                 var vertex = AccurateVertex(u: uPartAngle * Double(u) + startUAngle,
-                                            v: vPartAngle * Double(v), texCoord: double2(x: vPart * Double(v),
-                                                                                         y: uPart * Double(u)))
+                                            v: vPartAngle * Double(v),
+                                            texCoord: double2(x: vPart * Double(v),
+                                                              y: uPart * Double(u)))
                 //vertex.normal = vertex.position.normalized()
                 result.append(vertex)
             }
@@ -101,12 +102,17 @@ class GlobusSphere {
 
         for tileIndex in 0..<tilesCount {
             let startIndex = tileIndex * 4
+            let x = startIndex % 8
+            let y = startIndex / 8
             let tile = Tile(device: device,
                             bottomRightVert: vertices[Int(indices[startIndex])],
                             bottomLeftVert: vertices[Int(indices[startIndex + 1])],
                             topRightVert: vertices[Int(indices[startIndex + 2])],
                             topLeftVert: vertices[Int(indices[startIndex + 3])],
-                            radius: radius)
+                            radius: radius,
+                            zoom: 3,
+                            x: x,
+                            y: y)
 
             rootTiles.append(tile)
         }

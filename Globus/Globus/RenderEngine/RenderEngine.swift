@@ -20,8 +20,6 @@ class RenderEngine: NSObject {
     private var mesh: GlobusSphere!
     private var pipelineState: MTLRenderPipelineState!
 
-    private let texture: MTLTexture?
-
     private(set) var aspectRatio: Float = 1
 
     private var depthState: MTLDepthStencilState!
@@ -44,8 +42,6 @@ class RenderEngine: NSObject {
         mesh = GlobusSphere(device: device,
                             radius: 0.5,
                             segmentsInfo: .init(uPartsNumber: 16, vPartsNumber: 16))
-
-        texture = TextureController.texture(filename: "map_equirectangular.png", device: device)
 
         super.init()
 
@@ -122,11 +118,6 @@ extension RenderEngine: MTKViewDelegate {
         renderEncoder.setDepthStencilState(depthState)
 
         renderEncoder.setRenderPipelineState(pipelineState)
-
-        if let texture {
-            renderEncoder.setFragmentTexture(texture,
-                                             index: MainTexture.index)
-        }
 
         mesh.draw(engine: self,
                   encoder: renderEncoder,
