@@ -27,10 +27,10 @@ class Tile {
     lazy var vertices: [Vertex] = {
         var result = [Vertex]()
 
-        let texCoordinates = [float2(1.0, 1.0),
-                              float2(0.0, 1.0),
-                              float2(1.0, 0.0),
-                              float2(0.0, 0.0)]
+        let texCoordinates = [float2(0.0, 1.0),
+                              float2(1.0, 1.0),
+                              float2(0.0, 0.0),
+                              float2(1.0, 0.0)]
 
         var texIndex = -1
 

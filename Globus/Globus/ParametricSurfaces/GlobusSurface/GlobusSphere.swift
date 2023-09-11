@@ -99,7 +99,7 @@ class GlobusSphere {
 
         for tileIndex in 0..<tilesCount {
             let startIndex = tileIndex * 4
-            let x = 7 - tileIndex % segmentsInfo.uPartsNumber
+            let x = tileIndex % segmentsInfo.uPartsNumber
             let y = tileIndex / segmentsInfo.vPartsNumber
 
             let tile = Tile(device: device,
