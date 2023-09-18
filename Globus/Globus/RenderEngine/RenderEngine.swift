@@ -40,7 +40,6 @@ class RenderEngine: NSObject {
         self.device = device
 
         mesh = GlobusSphere(device: device,
-                            radius: 0.5,
                             segmentsInfo: .init(uPartsNumber: 8, vPartsNumber: 8))
 
         super.init()

@@ -7,6 +7,7 @@
 
 import Foundation
 import MetalKit
+import Combine
 
 struct SegmentsInfo {
     let uPartsNumber: Int
@@ -27,6 +28,24 @@ class GlobusSphere {
     var rootTiles = [Tile]()
 
     private var timer: Float = 0
+
+    private var cancellables = Set<AnyCancellable>()
+
+    private var scale: Float = 0.5
+
+    var currentRadius: Double = 1
+
+    var mouseWeelEvent: NSEvent? {
+        didSet {
+            scale += Float(mouseWeelEvent?.scrollingDeltaY ?? 0)
+
+            if scale < 0.5 {
+                scale = 0.5
+            } else if scale > 1 {
+                scale = 1
+            }
+        }
+    }
 
     var vertices: [AccurateVertex] {
         var result = [AccurateVertex]()
@@ -88,7 +107,6 @@ class GlobusSphere {
     }
 
     init(device: MTLDevice,
-         radius: Double,
          segmentsInfo: SegmentsInfo) {
         self.segmentsInfo = segmentsInfo
 
@@ -107,13 +125,15 @@ class GlobusSphere {
                             bottomLeftVert: vertices[Int(indices[startIndex + 1])],
                             topRightVert: vertices[Int(indices[startIndex + 2])],
                             topLeftVert: vertices[Int(indices[startIndex + 3])],
-                            radius: radius,
+                            radius: currentRadius,
                             zoom: 3,
                             x: x,
                             y: y)
 
             rootTiles.append(tile)
         }
+
+        setScrollWeelListener()
     }
 }
 
@@ -150,9 +170,16 @@ extension GlobusSphere {
             ])
         }
 
+        let scaleMatrix = matrix_float4x4([
+            SIMD4<Float>(scale, 0, 0, 0),
+            SIMD4<Float>(0, scale, 0, 0),
+            SIMD4<Float>(0, 0, scale, 0),
+            SIMD4<Float>(0, 0,     0, 1)
+        ])
+
         let translation = float4x4(translation: [0, 0, -2])
         let rotation = float4x4(rotation: [timer.degreesToRadians, timer.degreesToRadians, 0])
-        let model = translation.inverse * rotation
+        let model = translation.inverse * rotation * scaleMatrix
         var cam = Camera(model: model, proj: projMatrix)
 
         encoder.setVertexBytes(&cam,
@@ -164,5 +191,16 @@ extension GlobusSphere {
                       encoder: encoder,
                       aspectRatio: aspectRatio)
         }
+    }
+}
+
+// MARK: - Events
+extension GlobusSphere {
+    func setScrollWeelListener() {
+        NSApp.publisher(for: \.currentEvent)
+            .filter { event in event?.type == .scrollWheel }
+            .throttle(for: .milliseconds(1), scheduler: DispatchQueue.main, latest: true)
+            .assign(to: \.mouseWeelEvent, on: self)
+            .store(in: &cancellables)
     }
 }
