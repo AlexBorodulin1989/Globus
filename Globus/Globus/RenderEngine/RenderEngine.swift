@@ -20,7 +20,7 @@ class RenderEngine: NSObject {
     private var mesh: GlobusSphere!
     private var pipelineState: MTLRenderPipelineState!
 
-    private(set) var aspectRatio: Float = 1
+    private(set) var aspectRatio: Double = 1
 
     private var depthState: MTLDepthStencilState!
 
@@ -101,7 +101,7 @@ extension RenderEngine: MTKViewDelegate {
                  drawableSizeWillChange size: CGSize
     ) {
         let width = size.width > 1 ? size.width : 1
-        aspectRatio = Float(size.height / width)
+        aspectRatio = size.height / width
     }
 
     func draw(in view: MTKView) {

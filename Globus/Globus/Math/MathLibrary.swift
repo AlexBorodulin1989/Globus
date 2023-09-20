@@ -58,6 +58,15 @@ extension Float {
   }
 }
 
+extension Double {
+  var radiansToDegrees: Double {
+      (self / Double.pi) * 180
+  }
+  var degreesToRadians: Double {
+      (self / 180) * Double.pi
+  }
+}
+
 // MARK: - float4
 extension float4x4 {
   // MARK: - Translate
@@ -201,6 +210,80 @@ extension float4x4 {
       float4(m.columns.3))
     self = matrix
   }
+}
+
+// MARK: - double4x4
+extension double4x4 {
+    // MARK: - Translate
+    init(translation: double3) {
+      let matrix = double4x4(
+        [            1,             0,             0, 0],
+        [            0,             1,             0, 0],
+        [            0,             0,             1, 0],
+        [translation.x, translation.y, translation.z, 1]
+      )
+      self = matrix
+    }
+
+    // MARK: - Scale
+    init(scaling: double3) {
+      let matrix = double4x4(
+        [scaling.x,         0,         0, 0],
+        [        0, scaling.y,         0, 0],
+        [        0,         0, scaling.z, 0],
+        [        0,         0,         0, 1]
+      )
+      self = matrix
+    }
+
+    // MARK: - Rotate
+    init(rotationX angle: Double) {
+      let matrix = double4x4(
+        [1,           0,          0, 0],
+        [0,  cos(angle), sin(angle), 0],
+        [0, -sin(angle), cos(angle), 0],
+        [0,           0,          0, 1]
+      )
+      self = matrix
+    }
+
+    init(rotationY angle: Double) {
+      let matrix = double4x4(
+        [cos(angle), 0, -sin(angle), 0],
+        [         0, 1,           0, 0],
+        [sin(angle), 0,  cos(angle), 0],
+        [         0, 0,           0, 1]
+      )
+      self = matrix
+    }
+
+    init(rotationZ angle: Double) {
+      let matrix = double4x4(
+        [ cos(angle), sin(angle), 0, 0],
+        [-sin(angle), cos(angle), 0, 0],
+        [          0,          0, 1, 0],
+        [          0,          0, 0, 1]
+      )
+      self = matrix
+    }
+
+    init(rotation angle: double3) {
+      let rotationX = double4x4(rotationX: angle.x)
+      let rotationY = double4x4(rotationY: angle.y)
+      let rotationZ = double4x4(rotationZ: angle.z)
+      self = rotationX * rotationY * rotationZ
+    }
+
+    static func *(left: double4x4, right: double3) -> double3 {
+        let mul: double4 = [left[0][0] * right.x + left[1][0] * right.y + left[2][0] * right.z + left[3][0],
+                            left[0][1] * right.x + left[1][1] * right.y + left[2][1] * right.z + left[3][1],
+                            left[0][2] * right.x + left[1][2] * right.y + left[2][2] * right.z + left[3][2],
+                            left[0][3] * right.x + left[1][3] * right.y + left[2][3] * right.z + left[3][3]]
+
+        let invW = 1 / mul.w
+
+        return double3(x: mul.x * invW, y: mul.y * invW, z: mul.z * invW)
+    }
 }
 
 // MARK: - float3x3

@@ -20,34 +20,56 @@ struct AccurateVertex {
 }
 
 class GlobusSphere {
+    let device: MTLDevice
 
     private let segmentsInfo: SegmentsInfo
 
     private let limitAngle: Double = 1.48442223321
 
+    private let eps = 0.00001
+
     var rootTiles = [Tile]()
 
-    private var timer: Float = 0
+    private var timer: Double = 0
 
     private var cancellables = Set<AnyCancellable>()
 
-    private var scale: Float = 0.5
+    static let initialScale = 0.5
 
-    var currentRadius: Double = 1
+    private var scale: Double = initialScale
+
+    private var aspectRatio: Double = 1
+
+    var currentRadius: Double = 1 //Must be 1 initially
+    {
+        didSet {
+
+        }
+    }
 
     var mouseWeelEvent: NSEvent? {
         didSet {
-            scale += Float(mouseWeelEvent?.scrollingDeltaY ?? 0)
+            scale += Double(mouseWeelEvent?.scrollingDeltaY ?? 0)
 
             if scale < 0.5 {
                 scale = 0.5
+                let newRadius = round(currentRadius * 0.5)
+
+                if abs(newRadius - 1) < eps {
+                    currentRadius = newRadius
+                }
             } else if scale > 1 {
                 scale = 1
+                let newRadius = round(currentRadius * 2)
+
+                if newRadius < 2 + eps {
+                    currentRadius = newRadius
+                }
             }
         }
     }
 
-    var vertices: [AccurateVertex] {
+    lazy var vertices: [AccurateVertex] = {
         var result = [AccurateVertex]()
 
         let uPart: Double = 1.0 / Double(segmentsInfo.uPartsNumber)
@@ -58,7 +80,7 @@ class GlobusSphere {
 
         for u in 0...segmentsInfo.uPartsNumber {
             for v in 0...segmentsInfo.vPartsNumber {
-                var vertex = AccurateVertex(u: uPartAngle * Double(u) + startUAngle,
+                let vertex = AccurateVertex(u: uPartAngle * Double(u) + startUAngle,
                                             v: vPartAngle * Double(v))
                 //vertex.normal = vertex.position.normalized()
                 result.append(vertex)
@@ -66,9 +88,9 @@ class GlobusSphere {
         }
 
         return result
-    }
+    }()
 
-    var indices: [UInt16] {
+    lazy var indices: [UInt16] = {
         var result = [UInt16]()
         var index: UInt16 = 0
         for _ in 0..<segmentsInfo.uPartsNumber {
@@ -83,7 +105,7 @@ class GlobusSphere {
         }
 
         return result
-    }
+    }()
 
     static var layout: MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
@@ -108,17 +130,63 @@ class GlobusSphere {
 
     init(device: MTLDevice,
          segmentsInfo: SegmentsInfo) {
+        self.device = device
         self.segmentsInfo = segmentsInfo
 
-        let vertices = self.vertices
-        let indices = self.indices
+        updateTiles()
 
+        setScrollWeelListener()
+    }
+
+    func updateTiles() {
+        rootTiles.removeAll()
+        
         let tilesCount = indices.count / 4
+
+        let far: Double = 2
+        let near: Double = 1
+
+        let interval = far - near
+        let invInterval = 1 / interval
+
+        let a = far * invInterval
+        let b = -far * near * invInterval
+
+        let projMatrix: matrix_double4x4
+
+        if aspectRatio > 1 { // width > height
+            projMatrix = matrix_double4x4([
+                SIMD4<Double>(2,             0, 0, 0),
+                SIMD4<Double>(0, 2/aspectRatio, 0, 0),
+                SIMD4<Double>(0,             0, a, 1),
+                SIMD4<Double>(0,             0, b, 0)
+            ])
+        } else {
+            projMatrix = matrix_double4x4([
+                SIMD4<Double>(2 * aspectRatio, 0, 0, 0),
+                SIMD4<Double>(              0, 2, 0, 0),
+                SIMD4<Double>(              0, 0, a, 1),
+                SIMD4<Double>(              0, 0, b, 0)
+            ])
+        }
+
+        let scaleMatrix = matrix_double4x4([
+            SIMD4<Double>(scale, 0, 0, 0),
+            SIMD4<Double>(0, scale, 0, 0),
+            SIMD4<Double>(0, 0, scale, 0),
+            SIMD4<Double>(0, 0,     0, 1)
+        ])
+
+        let translation = double4x4(translation: [0, 0, -2 - (scale - Self.initialScale)])
+        let rotation = double4x4(rotation: [timer.degreesToRadians, timer.degreesToRadians, 0])
+        let model = translation.inverse * rotation * scaleMatrix
 
         for tileIndex in 0..<tilesCount {
             let startIndex = tileIndex * 4
             let x = tileIndex % segmentsInfo.uPartsNumber
             let y = tileIndex / segmentsInfo.vPartsNumber
+
+            let zOffset = log2(currentRadius) * Self.initialScale
 
             let tile = Tile(device: device,
                             bottomRightVert: vertices[Int(indices[startIndex])],
@@ -128,59 +196,25 @@ class GlobusSphere {
                             radius: currentRadius,
                             zoom: 3,
                             x: x,
-                            y: y)
+                            y: y,
+                            matrix: projMatrix * model)
 
             rootTiles.append(tile)
         }
-
-        setScrollWeelListener()
     }
 }
 
 extension GlobusSphere {
     func draw(engine: RenderEngine,
               encoder: MTLRenderCommandEncoder,
-              aspectRatio: Float) {
+              aspectRatio: Double) {
+        self.aspectRatio = aspectRatio
+
         timer += 1
         
-        let far: Float = 2
-        let near: Float = 1
+        updateTiles()
 
-        let interval = far - near
-        let invInterval = 1 / interval
-
-        let a = far * invInterval
-        let b = -far * near * invInterval
-
-        let projMatrix: matrix_float4x4
-
-        if aspectRatio > 1 { // width > height
-            projMatrix = matrix_float4x4([
-                SIMD4<Float>(2,             0, 0, 0),
-                SIMD4<Float>(0, 2/aspectRatio, 0, 0),
-                SIMD4<Float>(0,             0, a, 1),
-                SIMD4<Float>(0,             0, b, 0)
-            ])
-        } else {
-            projMatrix = matrix_float4x4([
-                SIMD4<Float>(2 * aspectRatio, 0, 0, 0),
-                SIMD4<Float>(              0, 2, 0, 0),
-                SIMD4<Float>(              0, 0, a, 1),
-                SIMD4<Float>(              0, 0, b, 0)
-            ])
-        }
-
-        let scaleMatrix = matrix_float4x4([
-            SIMD4<Float>(scale, 0, 0, 0),
-            SIMD4<Float>(0, scale, 0, 0),
-            SIMD4<Float>(0, 0, scale, 0),
-            SIMD4<Float>(0, 0,     0, 1)
-        ])
-
-        let translation = float4x4(translation: [0, 0, -2])
-        let rotation = float4x4(rotation: [timer.degreesToRadians, timer.degreesToRadians, 0])
-        let model = translation.inverse * rotation * scaleMatrix
-        var cam = Camera(model: model, proj: projMatrix)
+        var cam = Camera(model: .identity, proj: .identity)
 
         encoder.setVertexBytes(&cam,
                                length: MemoryLayout<Camera>.stride,
@@ -188,8 +222,7 @@ extension GlobusSphere {
         
         rootTiles.forEach { tile in
             tile.draw(engine: engine,
-                      encoder: encoder,
-                      aspectRatio: aspectRatio)
+                      encoder: encoder)
         }
     }
 }
