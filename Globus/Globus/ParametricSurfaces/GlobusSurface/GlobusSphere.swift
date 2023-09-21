@@ -34,37 +34,23 @@ class GlobusSphere {
 
     private var cancellables = Set<AnyCancellable>()
 
-    static let initialScale = 0.5
-
-    private var scale: Double = initialScale
-
     private var aspectRatio: Double = 1
+
+    private var transformMatrix: matrix_float4x4 = .identity
 
     var currentRadius: Double = 1 //Must be 1 initially
     {
         didSet {
-
+            print("currentRadius = \(currentRadius)")
         }
     }
 
     var mouseWeelEvent: NSEvent? {
         didSet {
-            scale += Double(mouseWeelEvent?.scrollingDeltaY ?? 0)
+            currentRadius += Double(mouseWeelEvent?.scrollingDeltaY ?? 0)
 
-            if scale < 0.5 {
-                scale = 0.5
-                let newRadius = round(currentRadius * 0.5)
-
-                if abs(newRadius - 1) < eps {
-                    currentRadius = newRadius
-                }
-            } else if scale > 1 {
-                scale = 1
-                let newRadius = round(currentRadius * 2)
-
-                if newRadius < 2 + eps {
-                    currentRadius = newRadius
-                }
+            if currentRadius < 0.5 {
+                currentRadius = 0.5
             }
         }
     }
@@ -109,10 +95,10 @@ class GlobusSphere {
 
     static var layout: MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
-        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[0].format = .float4
         vertexDescriptor.attributes[0].offset = 0
         vertexDescriptor.attributes[0].bufferIndex = 0
-        var stride = MemoryLayout<float3>.stride
+        var stride = MemoryLayout<float4>.stride
 
         vertexDescriptor.attributes[1].format = .float3
         vertexDescriptor.attributes[1].offset = stride
@@ -170,23 +156,16 @@ class GlobusSphere {
             ])
         }
 
-        let scaleMatrix = matrix_double4x4([
-            SIMD4<Double>(scale, 0, 0, 0),
-            SIMD4<Double>(0, scale, 0, 0),
-            SIMD4<Double>(0, 0, scale, 0),
-            SIMD4<Double>(0, 0,     0, 1)
-        ])
+        let translation = double4x4(translation: [0, 0, -2 - (currentRadius - 1)])
+        let rotation = double4x4(rotation: [0, timer.degreesToRadians, 0])
+        let model = translation.inverse * rotation
 
-        let translation = double4x4(translation: [0, 0, -2 - (scale - Self.initialScale)])
-        let rotation = double4x4(rotation: [timer.degreesToRadians, timer.degreesToRadians, 0])
-        let model = translation.inverse * rotation * scaleMatrix
+        let transform = projMatrix * model
 
         for tileIndex in 0..<tilesCount {
             let startIndex = tileIndex * 4
             let x = tileIndex % segmentsInfo.uPartsNumber
             let y = tileIndex / segmentsInfo.vPartsNumber
-
-            let zOffset = log2(currentRadius) * Self.initialScale
 
             let tile = Tile(device: device,
                             bottomRightVert: vertices[Int(indices[startIndex])],
@@ -197,10 +176,17 @@ class GlobusSphere {
                             zoom: 3,
                             x: x,
                             y: y,
-                            matrix: projMatrix * model)
+                            matrix: transform)
 
             rootTiles.append(tile)
         }
+
+        transformMatrix = matrix_float4x4([
+            SIMD4<Float>(Float(transform[0][0]), Float(transform[0][1]), Float(transform[0][2]), Float(transform[0][3])),
+            SIMD4<Float>(Float(transform[1][0]), Float(transform[1][1]), Float(transform[1][2]), Float(transform[1][3])),
+            SIMD4<Float>(Float(transform[2][0]), Float(transform[2][1]), Float(transform[2][2]), Float(transform[2][3])),
+            SIMD4<Float>(Float(transform[3][0]), Float(transform[3][1]), Float(transform[3][2]), Float(transform[3][3]))
+        ])
     }
 }
 
@@ -211,7 +197,7 @@ extension GlobusSphere {
         self.aspectRatio = aspectRatio
 
         timer += 1
-        
+
         updateTiles()
 
         var cam = Camera(model: .identity, proj: .identity)

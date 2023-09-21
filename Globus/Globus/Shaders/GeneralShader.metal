@@ -20,7 +20,7 @@ vertex VertexOut vertex_main(constant Vertex *vertices [[buffer(0)]],
                              uint id [[vertex_id]]) {
     auto vert = vertices[id];
     VertexOut result {
-        .pos = camera.proj * camera.model * float4(vert.position, 1),
+        .pos = camera.proj * camera.model * vert.position,
         .normal = vert.normal,
         .uv = vert.uv
     };

@@ -273,17 +273,6 @@ extension double4x4 {
       let rotationZ = double4x4(rotationZ: angle.z)
       self = rotationX * rotationY * rotationZ
     }
-
-    static func *(left: double4x4, right: double3) -> double3 {
-        let mul: double4 = [left[0][0] * right.x + left[1][0] * right.y + left[2][0] * right.z + left[3][0],
-                            left[0][1] * right.x + left[1][1] * right.y + left[2][1] * right.z + left[3][1],
-                            left[0][2] * right.x + left[1][2] * right.y + left[2][2] * right.z + left[3][2],
-                            left[0][3] * right.x + left[1][3] * right.y + left[2][3] * right.z + left[3][3]]
-
-        let invW = 1 / mul.w
-
-        return double3(x: mul.x * invW, y: mul.y * invW, z: mul.z * invW)
-    }
 }
 
 // MARK: - float3x3

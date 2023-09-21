@@ -84,12 +84,17 @@ class Tile {
          topLeftVert].forEach { vert in
             texIndex += 1
             let position = positionForParams(u: vert.u, v: vert.v)
-            let transformedPosition = matrix * position
-            let floatPosition: float3 = [Float(transformedPosition.x),
+            let transformedPosition = simd_mul(matrix, position)//matrix * position
+            let invW = 1.0 / transformedPosition.w
+            let floatPosition: float4 = [Float(transformedPosition.x),
                                            Float(transformedPosition.y),
-                                           Float(transformedPosition.z)]
+                                           Float(transformedPosition.z), 
+                                         Float(transformedPosition.w)]
+            let normal: float3 = [Float(position.x),
+                                  Float(position.y),
+                                  Float(position.z)]
             let vertex = Vertex(position: floatPosition,
-                                normal: floatPosition.normalized(),
+                                normal: normal.normalized(),
                                 uv: texCoordinates[texIndex])
             result.append(vertex)
         }
@@ -97,12 +102,12 @@ class Tile {
         return result
     }
 
-    func positionForParams(u: Double, v: Double) -> double3 {
+    func positionForParams(u: Double, v: Double) -> double4 {
         let x = radius * sin(u) * cos(v)
         let y = radius * cos(u)
         let z = radius * sin(u) * sin(v)
 
-        return [x, y, z]
+        return [x, y, z, 1]
     }
 }
 
